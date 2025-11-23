@@ -32,7 +32,12 @@ export function ColumnMapper({ headers, sampleData, onComplete }: ColumnMapperPr
     { key: 'date', label: 'Date', required: true },
     { key: 'payee', label: 'Payee/Merchant', required: true },
     { key: 'amount', label: 'Amount', required: true },
+    { key: 'transactionId', label: 'Transaction ID', required: false },
+    { key: 'type', label: 'Transaction Type', required: false },
     { key: 'description', label: 'Description', required: false },
+    { key: 'account', label: 'Account', required: false },
+    { key: 'balance', label: 'Balance', required: false },
+    { key: 'reference', label: 'Reference/Check #', required: false },
   ];
 
   const handleSubmit = () => {
@@ -128,7 +133,7 @@ export function ColumnMapper({ headers, sampleData, onComplete }: ColumnMapperPr
 
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="font-medium mb-4">Column Mapping</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {fields.map(({ key, label, required }) => (
             <div key={key}>
               <label className="block text-sm font-medium text-gray-700 mb-1">
