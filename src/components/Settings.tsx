@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { StorageType } from '../types';
 import { setStorageType, setBackendUrl, getStorageType, testConnection, clearTransactions } from '../storage';
-import { Database, Cloud, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { useTheme, Theme } from '../context/ThemeContext';
+import { Database, Cloud, Trash2, CheckCircle, XCircle, Sun, Moon, Smartphone } from 'lucide-react';
 
 interface SettingsProps {
   onStorageChange: () => void;
 }
 
 export function Settings({ onStorageChange }: SettingsProps) {
+  const { theme, setTheme } = useTheme();
   const [storage, setStorage] = useState<StorageType>(getStorageType());
   const [url, setUrl] = useState('http://localhost:3001');
   const [connectionStatus, setConnectionStatus] = useState<'untested' | 'testing' | 'connected' | 'failed'>('untested');
@@ -52,9 +54,39 @@ export function Settings({ onStorageChange }: SettingsProps) {
     onStorageChange();
   };
 
+  const themes: { value: Theme; label: string; icon: typeof Sun; desc: string }[] = [
+    { value: 'light', label: 'Light', icon: Sun, desc: 'Classic light theme' },
+    { value: 'dark', label: 'Dark', icon: Moon, desc: 'Easy on the eyes' },
+    { value: 'amoled', label: 'AMOLED', icon: Smartphone, desc: 'Pure black for OLED screens' },
+  ];
+
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Settings</h2>
+
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 className="font-medium mb-4">Theme</h3>
+        <div className="grid grid-cols-3 gap-3">
+          {themes.map(({ value, label, icon: Icon, desc }) => (
+            <label
+              key={value}
+              className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer transition-colors
+                ${theme === value ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'}`}
+            >
+              <input
+                type="radio"
+                name="theme"
+                checked={theme === value}
+                onChange={() => setTheme(value)}
+                className="sr-only"
+              />
+              <Icon size={24} className={theme === value ? 'text-blue-600' : 'text-gray-400'} />
+              <span className="mt-2 font-medium text-sm">{label}</span>
+              <span className="text-xs text-gray-500 text-center">{desc}</span>
+            </label>
+          ))}
+        </div>
+      </div>
 
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <h3 className="font-medium mb-4">Storage Location</h3>

@@ -1,1 +1,76 @@
 @import "tailwindcss";
+
+:root {
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --border: #374151;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+.amoled {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #171717;
+  --text-primary: #ffffff;
+  --text-secondary: #d4d4d4;
+  --text-muted: #737373;
+  --border: #262626;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Override Tailwind classes for theme support */
+.bg-gray-50 { background-color: var(--bg-primary); }
+.bg-white { background-color: var(--bg-secondary); }
+.bg-gray-100 { background-color: var(--bg-tertiary); }
+.text-gray-900 { color: var(--text-primary); }
+.text-gray-600, .text-gray-700 { color: var(--text-secondary); }
+.text-gray-500, .text-gray-400 { color: var(--text-muted); }
+.border-gray-200, .border-gray-300 { border-color: var(--border); }
+.border-b { border-color: var(--border); }
+.divide-y > * + * { border-color: var(--border); }
+
+.shadow, .shadow-sm {
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+/* Form elements */
+select, input[type="text"] {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+/* Table headers */
+.bg-gray-50 th {
+  background-color: var(--bg-tertiary);
+}
+
+/* Hover states */
+.hover\:bg-gray-100:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.hover\:bg-gray-50:hover {
+  background-color: var(--bg-tertiary);
+}
