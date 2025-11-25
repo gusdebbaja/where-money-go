@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "@types/papaparse": "^5.5.0",
     "@types/react-window": "^1.8.8",
+    "js-yaml": "^4.1.1",
     "lucide-react": "^0.554.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.0",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

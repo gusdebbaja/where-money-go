@@ -1,0 +1,288 @@
+# Category Hierarchy for Transaction Analysis
+# Supports up to 4 levels: Category > Subcategory > Sub-subcategory > Sub-sub-subcategory
+# Format:
+#   - name: Category Name
+#     color: #hexcolor
+#     isSubscription: true/false (optional)
+#     children: (optional)
+#       - name: Subcategory Name
+#         children: (optional)
+#           - name: Sub-subcategory Name
+#             children: (optional)
+#               - name: Sub-sub-subcategory Name
+
+categories:
+  - name: Income
+    color: "#10b981"
+    children:
+      - name: Salary
+      - name: Freelance
+      - name: Investments
+        children:
+          - name: Dividends
+          - name: Interest
+          - name: Capital Gains
+      - name: Other Income
+
+  - name: Food & Dining
+    color: "#ef4444"
+    children:
+      - name: Groceries
+        children:
+          - name: Supermarket
+          - name: Farmers Market
+          - name: Specialty Stores
+      - name: Restaurants
+        children:
+          - name: Fine Dining
+          - name: Casual Dining
+          - name: Fast Casual
+      - name: Fast Food
+        children:
+          - name: Burgers
+          - name: Pizza
+          - name: Asian
+          - name: Other Fast Food
+      - name: Cafes & Coffee
+      - name: Delivery & Takeout
+      - name: Alcohol & Bars
+
+  - name: Transportation
+    color: "#f97316"
+    children:
+      - name: Public Transit
+        children:
+          - name: Bus
+          - name: Train
+          - name: Subway
+          - name: Tram
+      - name: Fuel & Gas
+      - name: Parking
+      - name: Tolls
+      - name: Taxi & Rideshare
+        children:
+          - name: Uber
+          - name: Lyft
+          - name: Taxi
+      - name: Vehicle Maintenance
+        children:
+          - name: Oil Change
+          - name: Repairs
+          - name: Tires
+          - name: Car Wash
+      - name: Vehicle Insurance
+      - name: Vehicle Registration
+
+  - name: Shopping
+    color: "#eab308"
+    children:
+      - name: Clothing
+        children:
+          - name: Casual Wear
+          - name: Formal Wear
+          - name: Shoes
+          - name: Accessories
+      - name: Electronics
+        children:
+          - name: Computers
+          - name: Phones
+          - name: Accessories
+          - name: Home Electronics
+      - name: Home & Garden
+        children:
+          - name: Furniture
+          - name: Decor
+          - name: Garden Supplies
+          - name: Tools
+      - name: Personal Care
+        children:
+          - name: Haircare
+          - name: Skincare
+          - name: Cosmetics
+      - name: Books & Media
+      - name: Gifts
+      - name: Other Shopping
+
+  - name: Entertainment
+    color: "#22c55e"
+    children:
+      - name: Movies & Cinema
+      - name: Concerts & Events
+      - name: Sports & Recreation
+        children:
+          - name: Gym Membership
+          - name: Sports Equipment
+          - name: Classes
+      - name: Hobbies
+      - name: Gaming
+        children:
+          - name: Video Games
+          - name: Board Games
+          - name: Online Gaming
+      - name: Travel & Vacation
+        children:
+          - name: Flights
+          - name: Hotels
+          - name: Activities
+          - name: Souvenirs
+
+  - name: Bills & Utilities
+    color: "#3b82f6"
+    children:
+      - name: Rent & Mortgage
+      - name: Electricity
+      - name: Water
+      - name: Gas & Heating
+      - name: Internet
+      - name: Phone
+        children:
+          - name: Mobile
+          - name: Landline
+      - name: Trash & Recycling
+      - name: HOA Fees
+
+  - name: Subscriptions
+    color: "#a855f7"
+    isSubscription: true
+    children:
+      - name: Streaming Services
+        isSubscription: true
+        children:
+          - name: Video Streaming
+            isSubscription: true
+            children:
+              - name: Netflix
+                isSubscription: true
+              - name: Disney+
+                isSubscription: true
+              - name: HBO Max
+                isSubscription: true
+              - name: Amazon Prime Video
+                isSubscription: true
+          - name: Music Streaming
+            isSubscription: true
+            children:
+              - name: Spotify
+                isSubscription: true
+              - name: Apple Music
+                isSubscription: true
+              - name: YouTube Music
+                isSubscription: true
+      - name: Software & Apps
+        isSubscription: true
+        children:
+          - name: Productivity
+            isSubscription: true
+            children:
+              - name: Microsoft 365
+                isSubscription: true
+              - name: Adobe Creative Cloud
+                isSubscription: true
+              - name: Notion
+                isSubscription: true
+          - name: Cloud Storage
+            isSubscription: true
+            children:
+              - name: Dropbox
+                isSubscription: true
+              - name: Google Drive
+                isSubscription: true
+              - name: iCloud
+                isSubscription: true
+      - name: News & Magazines
+        isSubscription: true
+      - name: Fitness & Wellness
+        isSubscription: true
+        children:
+          - name: Gym Membership
+            isSubscription: true
+          - name: Fitness Apps
+            isSubscription: true
+          - name: Meditation Apps
+            isSubscription: true
+      - name: Other Subscriptions
+        isSubscription: true
+
+  - name: Healthcare
+    color: "#8b5cf6"
+    children:
+      - name: Doctor Visits
+        children:
+          - name: General Practitioner
+          - name: Specialist
+          - name: Dentist
+          - name: Optometrist
+      - name: Prescriptions
+      - name: Medical Supplies
+      - name: Health Insurance
+      - name: Mental Health
+        children:
+          - name: Therapy
+          - name: Counseling
+      - name: Alternative Medicine
+
+  - name: Education
+    color: "#06b6d4"
+    children:
+      - name: Tuition
+      - name: Books & Supplies
+      - name: Online Courses
+      - name: Workshops & Seminars
+      - name: Student Loans
+
+  - name: Financial
+    color: "#ec4899"
+    children:
+      - name: Bank Fees
+      - name: Investment Fees
+      - name: Loan Payments
+        children:
+          - name: Mortgage
+          - name: Car Loan
+          - name: Personal Loan
+          - name: Student Loan
+      - name: Credit Card Payments
+      - name: Taxes
+        children:
+          - name: Income Tax
+          - name: Property Tax
+          - name: Sales Tax
+      - name: Insurance
+        children:
+          - name: Life Insurance
+          - name: Health Insurance
+          - name: Home Insurance
+          - name: Auto Insurance
+
+  - name: Family & Children
+    color: "#f59e0b"
+    children:
+      - name: Childcare
+      - name: School Expenses
+      - name: Toys & Games
+      - name: Children's Clothing
+      - name: Baby Supplies
+      - name: Allowance
+
+  - name: Pets
+    color: "#84cc16"
+    children:
+      - name: Pet Food
+      - name: Veterinary
+      - name: Pet Supplies
+      - name: Grooming
+      - name: Pet Insurance
+
+  - name: Charity & Donations
+    color: "#14b8a6"
+    children:
+      - name: Religious Organizations
+      - name: Non-Profits
+      - name: Political Donations
+      - name: Crowdfunding
+
+  - name: Other
+    color: "#6b7280"
+    children:
+      - name: Uncategorized
+      - name: Miscellaneous

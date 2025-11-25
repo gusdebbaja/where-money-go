@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Transaction, ColumnMapping, AppView } from './types';
+import { Transaction, ColumnMapping, AppView, Category } from './types';
 import { FileUpload } from './components/FileUpload';
 import { ColumnMapper } from './components/ColumnMapper';
 import { TransactionList } from './components/TransactionList';
@@ -7,24 +7,14 @@ import { Analytics } from './components/Analytics';
 import { Settings } from './components/Settings';
 import { Upload, Map, List, BarChart3, Settings as SettingsIcon } from 'lucide-react';
 import * as storage from './storage';
-
-const DEFAULT_CATEGORIES = [
-  { name: 'Food & Dining', color: '#ef4444' },
-  { name: 'Transportation', color: '#f97316' },
-  { name: 'Shopping', color: '#eab308' },
-  { name: 'Entertainment', color: '#22c55e' },
-  { name: 'Bills & Utilities', color: '#3b82f6' },
-  { name: 'Healthcare', color: '#8b5cf6' },
-  { name: 'Income', color: '#10b981' },
-  { name: 'Other', color: '#6b7280' },
-];
+import { loadCategoriesFromYaml } from './utils/categoryLoader';
 
 function App() {
   const [view, setView] = useState<AppView>('upload');
   const [rawData, setRawData] = useState<string[][]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Initialize storage and load data
@@ -43,6 +33,10 @@ function App() {
       // Initialize IndexedDB
       await storage.initDB();
 
+      // Load categories from YAML
+      const loadedCategories = await loadCategoriesFromYaml();
+      setCategories(loadedCategories);
+
       // Load existing data
       await loadData();
       setLoading(false);
@@ -52,14 +46,8 @@ function App() {
 
   const loadData = async () => {
     try {
-      const [loadedTxns, loadedCats] = await Promise.all([
-        storage.getTransactions(),
-        storage.getCategories(),
-      ]);
+      const loadedTxns = await storage.getTransactions();
       setTransactions(loadedTxns);
-      if (loadedCats.length > 0) {
-        setCategories(loadedCats);
-      }
       if (loadedTxns.length > 0) {
         setView('transactions');
       }
@@ -91,35 +79,59 @@ function App() {
       const rawAmount = row[amountIdx]?.replace(/[^0-9.-]/g, '') || '0';
       const rawBalance = balanceIdx >= 0 ? row[balanceIdx]?.replace(/[^0-9.-]/g, '') : undefined;
       const rawType = typeIdx >= 0 ? row[typeIdx]?.toLowerCase() : undefined;
+      const amount = parseFloat(rawAmount);
+      const payee = row[payeeIdx] || 'Unknown';
+      const description = descIdx >= 0 ? row[descIdx] : undefined;
+
+      // Auto-detect savings: positive amount with keywords like "transfer", "savings", "deposit"
+      const savingsKeywords = ['savings', 'transfer to savings', 'deposit', 'investment'];
+      const isSaving = amount > 0 && savingsKeywords.some(kw => 
+        payee.toLowerCase().includes(kw) || description?.toLowerCase().includes(kw)
+      );
+
+      const txnType: 'credit' | 'debit' | undefined = rawType?.includes('credit') ? 'credit' : rawType?.includes('debit') ? 'debit' : undefined;
 
       return {
         id: `txn-${Date.now()}-${index}`,
         transactionId: txnIdIdx >= 0 ? row[txnIdIdx] : undefined,
         date: new Date(row[dateIdx]),
-        payee: row[payeeIdx] || 'Unknown',
-        amount: parseFloat(rawAmount),
-        type: rawType?.includes('credit') ? 'credit' : rawType?.includes('debit') ? 'debit' : undefined,
-        description: descIdx >= 0 ? row[descIdx] : undefined,
+        payee,
+        amount,
+        type: txnType,
+        description,
         category: undefined,
         tags: [],
         account: accountIdx >= 0 ? row[accountIdx] : undefined,
         balance: rawBalance ? parseFloat(rawBalance) : undefined,
         reference: refIdx >= 0 ? row[refIdx] : undefined,
+        isSaving,
       };
     }).filter(t => !isNaN(t.date.getTime()) && !isNaN(t.amount));
 
-    // Check for duplicates if transaction IDs are provided
-    const txnIds = parsed.filter(t => t.transactionId).map(t => t.transactionId!);
-    let duplicates = new Set<string>();
-    if (txnIds.length > 0) {
-      duplicates = await storage.checkDuplicates(txnIds);
+    // Check for duplicates based on duplicate detection setting
+    const duplicateDetection = localStorage.getItem('duplicate-detection') || 'strict';
+    const duplicateIndices = new Set<number>();
+    
+    if (duplicateDetection === 'strict') {
+      // A transaction is duplicate if date, payee, and amount all match an existing transaction
+      parsed.forEach((newTxn, index) => {
+        const isDuplicate = transactions.some(existingTxn => 
+          existingTxn.date.getTime() === newTxn.date.getTime() &&
+          existingTxn.payee === newTxn.payee &&
+          existingTxn.amount === newTxn.amount
+        );
+        
+        if (isDuplicate) {
+          duplicateIndices.add(index);
+        }
+      });
     }
 
     // Filter out duplicates
-    const newTransactions = parsed.filter(t => !t.transactionId || !duplicates.has(t.transactionId));
+    const newTransactions = parsed.filter((_, index) => !duplicateIndices.has(index));
 
-    if (duplicates.size > 0) {
-      alert(`Skipped ${duplicates.size} duplicate transaction(s)`);
+    if (duplicateIndices.size > 0) {
+      alert(`Skipped ${duplicateIndices.size} duplicate transaction(s) based on date, payee, and amount`);
     }
 
     // Save to storage
@@ -131,6 +143,13 @@ function App() {
 
   const handleUpdateTransaction = async (id: string, updates: Partial<Transaction>) => {
     const updated = transactions.map(t => t.id === id ? { ...t, ...updates } : t);
+    setTransactions(updated);
+    await storage.saveTransactions(updated);
+  };
+
+  const handleBulkUpdate = async (ids: string[], updates: Partial<Transaction>) => {
+    const idSet = new Set(ids);
+    const updated = transactions.map(t => idSet.has(t.id) ? { ...t, ...updates } : t);
     setTransactions(updated);
     await storage.saveTransactions(updated);
   };
@@ -194,6 +213,7 @@ function App() {
             transactions={transactions}
             categories={categories}
             onUpdate={handleUpdateTransaction}
+            onBulkUpdate={handleBulkUpdate}
           />
         )}
         {view === 'analytics' && (
