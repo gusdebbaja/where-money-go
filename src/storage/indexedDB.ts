@@ -48,7 +48,6 @@ export async function saveTransactions(transactions: Transaction[]): Promise<voi
   const store = tx.objectStore('transactions');
 
   for (const txn of transactions) {
-    // Convert Date to ISO string for storage
     const toStore = {
       ...txn,
       date: txn.date instanceof Date ? txn.date.toISOString() : txn.date,
@@ -57,6 +56,51 @@ export async function saveTransactions(transactions: Transaction[]): Promise<voi
   }
 
   return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** Update a single transaction without touching the rest. */
+export async function patchTransaction(id: string, updates: Partial<Transaction>): Promise<void> {
+  const database = await initDB();
+  const tx = database.transaction('transactions', 'readwrite');
+  const store = tx.objectStore('transactions');
+
+  return new Promise((resolve, reject) => {
+    const req = store.get(id);
+    req.onsuccess = () => {
+      const existing = req.result;
+      if (existing) {
+        const patched = { ...existing, ...updates };
+        if (updates.date instanceof Date) patched.date = updates.date.toISOString();
+        store.put(patched);
+      }
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** Update multiple transactions in a single IndexedDB transaction. */
+export async function patchTransactions(patches: Array<{ id: string; updates: Partial<Transaction> }>): Promise<void> {
+  if (patches.length === 0) return;
+  const database = await initDB();
+  const tx = database.transaction('transactions', 'readwrite');
+  const store = tx.objectStore('transactions');
+
+  return new Promise((resolve, reject) => {
+    for (const { id, updates } of patches) {
+      const req = store.get(id);
+      req.onsuccess = () => {
+        const existing = req.result;
+        if (existing) {
+          const patched = { ...existing, ...updates };
+          if (updates.date instanceof Date) patched.date = updates.date.toISOString();
+          store.put(patched);
+        }
+      };
+    }
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
   });

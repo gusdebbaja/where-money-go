@@ -1,12 +1,15 @@
 import { useCallback } from 'react';
 import Papa from 'papaparse';
 import { Upload } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 interface FileUploadProps {
   onUpload: (data: string[][], headers: string[]) => void;
 }
 
 export function FileUpload({ onUpload }: FileUploadProps) {
+  const showToast = useToast();
+
   const handleFile = useCallback((file: File) => {
     Papa.parse(file, {
       complete: (results) => {
@@ -19,10 +22,10 @@ export function FileUpload({ onUpload }: FileUploadProps) {
       },
       error: (error) => {
         console.error('Parse error:', error);
-        alert('Failed to parse CSV file');
+        showToast('Failed to parse CSV file. Make sure it is a valid CSV.', 'error');
       }
     });
-  }, [onUpload]);
+  }, [onUpload, showToast]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

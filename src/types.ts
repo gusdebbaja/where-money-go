@@ -13,6 +13,7 @@ export interface Transaction {
   reference?: string;
   currency?: string; // Individual transaction currency override
   isSaving?: boolean; // Mark as savings transaction
+  isHidden?: boolean; // Exclude from all analytics
 }
 
 export interface ColumnMapping {
@@ -34,7 +35,7 @@ export interface Category {
   isSubscription?: boolean; // Mark as subscription category
 }
 
-export type AppView = 'upload' | 'mapping' | 'transactions' | 'analytics' | 'settings';
+export type AppView = 'upload' | 'mapping' | 'transactions' | 'analytics' | 'interactive' | 'subscriptions' | 'drilldown' | 'settings';
 
 export type StorageType = 'local' | 'backend';
 
@@ -54,5 +55,14 @@ export interface PayeeRenamingRule {
   pattern: string; // Can be plain text or regex
   replacement: string;
   isRegex: boolean;
+  enabled: boolean;
+}
+
+export interface Budget {
+  id: string;
+  category: string; // Category name
+  amount: number; // Budget amount
+  period: 'week' | 'month' | 'year';
+  includeChildren: boolean; // Include subcategories in budget calculation
   enabled: boolean;
 }

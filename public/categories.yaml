@@ -17,12 +17,38 @@ categories:
     children:
       - name: Salary
       - name: Freelance
-      - name: Investments
+      - name: Investment Income
         children:
           - name: Dividends
           - name: Interest
           - name: Capital Gains
       - name: Other Income
+
+  - name: Refunds
+    color: "#06b6d4"
+    children:
+      - name: Product Refund
+      - name: Service Refund
+      - name: Travel Refund
+      - name: Other Refund
+
+  - name: Investments
+    color: "#6366f1"
+    children:
+      - name: Stocks
+      - name: ETFs
+      - name: Crypto
+      - name: Bonds
+      - name: Real Estate
+      - name: Other Investments
+
+  - name: Transfers
+    color: "#ec4899"
+    children:
+      - name: Own Accounts
+      - name: Partner
+      - name: Family
+      - name: Friends
 
   - name: Food & Dining
     color: "#ef4444"
@@ -46,6 +72,7 @@ categories:
       - name: Cafes & Coffee
       - name: Delivery & Takeout
       - name: Alcohol & Bars
+      - name: Office Restaurant
 
   - name: Transportation
     color: "#f97316"

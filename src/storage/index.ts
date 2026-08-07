@@ -23,6 +23,21 @@ export async function saveTransactions(transactions: Transaction[]): Promise<voi
   return indexedDB.saveTransactions(transactions);
 }
 
+export async function patchTransaction(id: string, updates: Partial<Transaction>): Promise<void> {
+  if (storageType === 'backend') {
+    return backend.updateTransaction(id, updates);
+  }
+  return indexedDB.patchTransaction(id, updates);
+}
+
+export async function patchTransactions(patches: Array<{ id: string; updates: Partial<Transaction> }>): Promise<void> {
+  if (storageType === 'backend') {
+    await Promise.all(patches.map(({ id, updates }) => backend.updateTransaction(id, updates)));
+    return;
+  }
+  return indexedDB.patchTransactions(patches);
+}
+
 export async function getTransactions(): Promise<Transaction[]> {
   if (storageType === 'backend') {
     return backend.getTransactions();

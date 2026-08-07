@@ -30,13 +30,13 @@ export function escapeRegex(str: string): string {
 export function extractPayeePattern(payee: string): string {
   // Try to extract the base payee name by removing common patterns
   // Remove dates like &/25-11-17, 25-11-17, 2023-11-25, etc.
-  let pattern = payee
-    .replace(/\s*[&\/]\d{2}-\d{2}-\d{2,4}\s*$/gi, '')
+  const pattern = payee
+    .replace(/\s*[&/]\d{2}-\d{2}-\d{2,4}\s*$/gi, '')
     .replace(/\s*\d{2}-\d{2}-\d{2,4}\s*$/gi, '')
     .replace(/\s*\d{4}-\d{2}-\d{2}\s*$/gi, '')
     .replace(/\s*\d{2}\/\d{2}\/\d{2,4}\s*$/gi, '')
     .trim();
-  
+
   return pattern;
 }
 
@@ -58,4 +58,18 @@ export function addRenamingRule(rule: Omit<PayeeRenamingRule, 'id'>): PayeeRenam
   rules.push(newRule);
   saveRenamingRules(rules);
   return newRule;
+}
+
+export function batchAddRenamingRules(newRules: Array<Omit<PayeeRenamingRule, 'id'>>): PayeeRenamingRule[] {
+  if (newRules.length === 0) return [];
+  
+  const rules = getRenamingRules();
+  const addedRules = newRules.map(rule => ({
+    ...rule,
+    id: `rule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+  }));
+  
+  rules.push(...addedRules);
+  saveRenamingRules(rules);
+  return addedRules;
 }

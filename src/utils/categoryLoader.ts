@@ -76,6 +76,7 @@ function getDefaultCategories(): Category[] {
     { name: 'Transportation', color: '#f97316' },
     { name: 'Gas', color: '#f97316', parent: 'Transportation' },
     { name: 'Public Transit', color: '#f97316', parent: 'Transportation' },
+    { name: 'Taxi', color: '#f97316', parent: 'Transportation' },
     { name: 'Shopping', color: '#eab308' },
     { name: 'Entertainment', color: '#22c55e' },
     { name: 'Bills & Utilities', color: '#3b82f6' },
